@@ -6,91 +6,117 @@
 using namespace std;
 #define endl '\n'
 
-bool search(vector<string> &words, string &input)
+class SpellChecker
 {
-    int low = 0, high = words.size() - 1;
+private:
+    vector<string> dictionary;
 
-    while (low <= high)
+    bool search(const string &word)
     {
-        int mid = (low + high) / 2;
-        if (words[mid] == input)
-            return true;
-        else if (words[mid] < input)
-            low = mid + 1;
-        else
-            high = mid - 1;
-    }
-    return false;
-}
+        // Implement search functionality
+        // Return true if word is in dictionary
 
-// int distance(int i, int j, string &word, string &input)
-// {
-//     if (i < 0)
-//         return 1 + j;
-//     if (j < 0)
-//         return 1 + i;
+        int low = 0, high = dictionary.size() - 1;
 
-//     if (word[i] == input[j])
-//         return distance(i - 1, j - 1, word, input);
-//     else
-//     {
-//         int del, ins, rep, trans;
-//         del = ins = rep = trans = INT_MAX;
-
-//         del = 1 + distance(i, j - 1, word, input);
-//         ins = 1 + distance(i - 1, j, word, input);
-//         rep = 1 + distance(i - 1, j - 1, word, input);
-/*
-         if (i > 0 && j > 0)
-         {
-            if ((word[i-1] == input[j]) && (word[i] == input[j-1]))
-                trans = 1 + distance(i-2, j-2, word, input);
-         }
-*/
-//         return min(del, min(ins, rep));
-//     }
-// }
-
-int distance(string &word, string &input)
-{
-    int n = word.size();
-    int m = input.size();
-    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
-
-    for (int i = 0; i <= n; i++)
-        dp[i][0] = i;
-
-    for (int j = 0; j <= m; j++)
-        dp[0][j] = j;
-
-    for (int i = 1; i <= n; i++)
-    {
-        for (int j = 1; j <= m; j++)
+        while (low <= high)
         {
-            if (word[i - 1] == input[j - 1])
-                dp[i][j] = dp[i - 1][j - 1]; // distance(i - 1, j - 1, word, input);
+            int mid = (low + high) / 2;
+            if (dictionary[mid] == word)
+                return true;
+            else if (dictionary[mid] < word)
+                low = mid + 1;
             else
+                high = mid - 1;
+        }
+        return false;
+    }
+
+    int distance(const string &word1, const string &word2)
+    {
+        // Implement distance calculation
+        // Return the distance between word1 and word2
+        int n = word1.size();
+        int m = word2.size();
+        vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+
+        for (int i = 0; i <= n; i++)
+            dp[i][0] = i;
+
+        for (int j = 0; j <= m; j++)
+            dp[0][j] = j;
+
+        for (int i = 1; i <= n; i++)
+        {
+            for (int j = 1; j <= m; j++)
             {
-                int del, ins, rep, trans;
-                del = ins = rep = trans = INT_MAX;
-
-                del = 1 + dp[i][j - 1];     // distance(i, j - 1, word, input);
-                ins = 1 + dp[i - 1][j];     // distance(i - 1, j, word, input);
-                rep = 1 + dp[i - 1][j - 1]; // distance(i - 1, j - 1, word, input);
-
-                if (i > 1 && j > 1)
+                if (word1[i - 1] == word2[j - 1])
+                    dp[i][j] = dp[i - 1][j - 1]; // distance(i - 1, j - 1, word, input);
+                else
                 {
-                    if ((word[i - 2] == input[j - 1]) && (word[i - 1] == input[j - 2]))
-                        trans = 1 + dp[i - 2][j - 2]; // distance(i - 2, j - 2, word, input);
-                }
+                    int del, ins, rep, trans;
+                    del = ins = rep = trans = INT_MAX;
 
-                dp[i][j] = min(min(del, trans), min(ins, rep));
+                    del = 1 + dp[i][j - 1];     // distance(i, j - 1, word, input);
+                    ins = 1 + dp[i - 1][j];     // distance(i - 1, j, word, input);
+                    rep = 1 + dp[i - 1][j - 1]; // distance(i - 1, j - 1, word, input);
+
+                    if (i > 1 && j > 1)
+                    {
+                        if ((word1[i - 2] == word2[j - 1]) && (word1[i - 1] == word2[j - 2]))
+                            trans = 1 + dp[i - 2][j - 2]; // distance(i - 2, j - 2, word, input);
+                    }
+
+                    dp[i][j] = min(min(del, trans), min(ins, rep));
+                }
             }
         }
+
+        return dp[n][m];
     }
 
-    return dp[n][m];
-}
+public:
+    SpellChecker(const vector<string> &words) : dictionary(words) {}
+
+    void toLowerCase(string &input)
+    {
+        // Implement toLowerCase functionality
+        transform(input.begin(), input.end(), input.begin(), ::tolower);
+    }
+
+    pair<int, vector<string>> check(string input)
+    {
+        /*
+            Implement the spell checker function
+            Takes in a string input
+            Return a pair of integer and vector of strings
+            The integer is the minimum distance between the input and the words in the dictionary
+            The vector of strings contains all the words in the dictionary that have the minimum distance
+        */
+        toLowerCase(input);
+        vector<string> possibleWords;
+        int minDistance = INT_MAX;
+
+        if (!search(input))
+        {
+            for (const string &word : dictionary)
+            {
+                int temp = distance(word, input);
+                if (temp < minDistance)
+                {
+                    possibleWords.clear();
+                    minDistance = temp;
+                    possibleWords.push_back(word);
+                }
+                else if (temp == minDistance)
+                {
+                    possibleWords.push_back(word);
+                }
+            }
+        }
+
+        return {minDistance, possibleWords};
+    }
+};
 
 int main()
 {
@@ -108,42 +134,23 @@ int main()
 
     string input;
     cin >> input;
-    transform(input.begin(), input.end(), input.begin(), ::tolower);
-    vector<string> possibleWords;
-    int minDistance = INT_MAX;
-    int n = input.size();
-    int temp;
 
-    if (!search(words, input))
-    {
-        for (string word : words)
-        {
-            int m = word.size();
-            if (abs(n - m) <= minDistance)
-            {
-                temp = distance(word, input);
-                if (temp == minDistance)
-                {
-                    possibleWords.push_back(word);
-                }
-                else if (temp < minDistance)
-                {
-                    minDistance = temp;
-                    possibleWords.clear();
-                    possibleWords.push_back(word);
-                }
-            }
-        }
-    }
+    SpellChecker obj(words);
 
-    cout << endl << "=====================" << endl;
+    pair<int, vector<string>> result = obj.check(input);
+    int minDistance = result.first;
+    vector<string> possibleWords = result.second;
+
+    cout << endl
+         << "=====================" << endl;
 
     if (minDistance == INT_MAX)
         cout << "No mistake" << endl;
     else
     {
         cout << "min distance is : " << minDistance << endl;
-        cout << "=====================" << endl << "Possible words are : " << "\n\n";
+        cout << "=====================" << endl
+             << "Possible words are : " << "\n\n";
 
         for (string word : possibleWords)
             cout << word << endl;
