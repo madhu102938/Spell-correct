@@ -3,8 +3,22 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+// #include "SpellChecker.h"
 using namespace std;
 #define endl '\n'
+
+// class SpellChecker {
+// private:
+//     vector<string> dictionary;
+
+//     bool search(const string &word);
+//     int distance(const string &word1, const string &word2);
+
+// public:
+//     SpellChecker(const vector<string> &words);
+//     void toLowerCase(string &input);
+//     pair<int, vector<string>> check(string input);
+// };
 
 class SpellChecker
 {
@@ -118,10 +132,25 @@ public:
     }
 };
 
-int main()
-{
+int main(int argc, char *argv[]) {
 
-    ifstream my_file("words_alpha.txt");
+    string dictionaryFile, input;
+    if (argc == 3)
+    {
+        dictionaryFile = argv[1];
+        input = argv[2];
+    }
+    else
+    {
+        cin >> dictionaryFile;
+    }
+
+    ifstream my_file(dictionaryFile);
+    if (!my_file) {
+        cerr << "Error opening file: " << dictionaryFile << endl;
+        return 1;
+    }
+
     string line;
     vector<string> words;
 
@@ -132,7 +161,6 @@ int main()
     }
     my_file.close();
 
-    string input;
     cin >> input;
 
     SpellChecker obj(words);
