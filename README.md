@@ -6,10 +6,7 @@ Enter a word, if it is incorrect, then it will suggest a possible correct word
 ## Steps to run this
 - Make sure `main_file.cpp` and `words_alpha.txt` are the same directory
 - Run `main_file.cpp`
-- Initiate the object of `SpellChecker` with your choice of word list
-  - Replace the `words_alpha.txt` with your choice of words
-  - make sure that its one word per line
-  - It takes in two arguments
+- It takes in two arguments
      1. path to word list (one word per line)
      2. The word which you want to check
   - Returns a vector of words that are closest to the word
