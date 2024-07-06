@@ -12,3 +12,5 @@ Enter a word, if it is incorrect, then it will suggest a possible correct word
 - Returns a vector of words that are closest to the word
 - Use the `check` method to get word suggestions
 - Enter a word (doesn't work for sentences)
+
+[YouTube Preview](https://youtu.be/aREFcWlebpE)
